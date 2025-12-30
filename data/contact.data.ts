@@ -42,7 +42,7 @@ export const IMTC_CONTACT: ImtcContact = {
   whatsapp: {
     e164: '62817700343',
     display: '+62 817-700-343',
-    picName: 'Andita Pusparani'
+    picName: 'Andita'
   },
   instagram: {
     handle: 'indonesiamicetrainingcenter',
