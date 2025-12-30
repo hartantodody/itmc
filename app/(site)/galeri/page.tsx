@@ -1,5 +1,13 @@
 import Container from '@/components/common/container'
 import GallerySection from '@/components/sections/gallery-section'
+import { createPageMetadata } from '@/lib/seo-helpers'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Galeri',
+  description: 'Dokumentasi kegiatan dan highlight program pelatihan IMTC.',
+  pathname: '/galeri'
+})
 
 export default function GalleryPage() {
   return (

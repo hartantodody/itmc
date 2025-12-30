@@ -1,18 +1,8 @@
 import Link from 'next/link'
 import Container from '@/components/common/container'
-import { Instagram, Linkedin, Youtube, Globe, ArrowUpRight } from 'lucide-react'
+import { Instagram, ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
-
-const SOCIALS = [
-  { label: 'Website', href: 'https://imtc.co.id', icon: Globe },
-  { label: 'Instagram', href: 'https://instagram.com/imtc', icon: Instagram },
-  {
-    label: 'LinkedIn',
-    href: 'https://linkedin.com/company/imtc',
-    icon: Linkedin
-  },
-  { label: 'YouTube', href: 'https://youtube.com/@imtc', icon: Youtube }
-] as const
+import { IMTC_CONTACT } from '@/data/contact.data'
 
 const NAV = [
   { label: 'Tentang', href: '/#tentang' },
@@ -24,7 +14,6 @@ const NAV = [
 export default function Footer() {
   return (
     <footer className='relative overflow-hidden border-t bg-background'>
-      {/* subtle background texture */}
       <div className='pointer-events-none absolute inset-0 -z-10'>
         <div className='absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/5 blur-3xl' />
         <div className='absolute -right-24 top-20 h-72 w-72 rounded-full bg-accent/5 blur-3xl' />
@@ -38,7 +27,7 @@ export default function Footer() {
             <div className='grid size-9 place-items-center rounded-xl border border-white/10 bg-white/5 shadow-sm'>
               <Image
                 src='/images/imtc-icon.webp'
-                alt='IMTC'
+                alt={IMTC_CONTACT.brand.short}
                 width={22}
                 height={22}
                 priority
@@ -48,10 +37,10 @@ export default function Footer() {
 
             <div className='space-y-0.5'>
               <div className='font-heading text-base font-extrabold leading-none'>
-                IMTC
+                {IMTC_CONTACT.brand.short}
               </div>
               <div className='text-xs text-muted-foreground'>
-                Indonesia MICE Training Center
+                {IMTC_CONTACT.brand.long}
               </div>
             </div>
           </div>
@@ -63,13 +52,13 @@ export default function Footer() {
 
           <div className='flex flex-wrap items-center gap-2'>
             <span className='rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground'>
-              Online
-            </span>
-            <span className='rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground'>
               Offline
             </span>
             <span className='rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground'>
               In-house
+            </span>
+            <span className='rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground'>
+              Sertifikasi (opsional)
             </span>
           </div>
         </div>
@@ -101,23 +90,37 @@ export default function Footer() {
               <div>
                 <div className='text-xs text-muted-foreground'>Email</div>
                 <a
-                  href='mailto:info@imtc.co.id'
+                  href={IMTC_CONTACT.email.mailto}
                   className='font-mono text-sm text-foreground hover:underline'
                 >
-                  info@imtc.co.id
+                  {IMTC_CONTACT.email.address}
                 </a>
               </div>
 
               <div>
                 <div className='text-xs text-muted-foreground'>WhatsApp</div>
                 <a
-                  href='https://wa.me/62xxxxxxxxxx'
+                  href={`https://wa.me/${IMTC_CONTACT.whatsapp.e164}`}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='font-mono text-sm text-foreground hover:underline'
                 >
-                  +62 xxx-xxxx-xxxx
+                  {IMTC_CONTACT.whatsapp.display}
                 </a>
+                {IMTC_CONTACT.whatsapp.picName ? (
+                  <div className='mt-1 text-xs text-muted-foreground'>
+                    a.n {IMTC_CONTACT.whatsapp.picName}
+                  </div>
+                ) : null}
+              </div>
+
+              <div>
+                <div className='text-xs text-muted-foreground'>
+                  {IMTC_CONTACT.address.label}
+                </div>
+                <div className='text-xs text-foreground/80'>
+                  {IMTC_CONTACT.address.lines.join(', ')}
+                </div>
               </div>
             </div>
           </div>
@@ -128,25 +131,19 @@ export default function Footer() {
           <div className='font-heading text-sm font-extrabold'>Ikuti Kami</div>
 
           <div className='flex flex-wrap items-center gap-3'>
-            {SOCIALS.map((item) => {
-              const Icon = item.icon
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  aria-label={item.label}
-                  className='group inline-flex h-10 w-10 items-center justify-center rounded-2xl border bg-card text-foreground/70 shadow-sm transition hover:-translate-y-0.5 hover:text-foreground hover:shadow-md'
-                >
-                  <Icon className='h-4 w-4 transition-transform group-hover:scale-110' />
-                </Link>
-              )
-            })}
+            <Link
+              href={IMTC_CONTACT.instagram.url}
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label='Instagram'
+              className='group inline-flex h-10 w-10 items-center justify-center rounded-2xl border bg-card text-foreground/70 shadow-sm transition hover:text-foreground hover:shadow-md'
+            >
+              <Instagram className='h-4 w-4 transition-transform group-hover:scale-110' />
+            </Link>
           </div>
 
           <p className='text-xs text-muted-foreground'>
-            Info kegiatan, pelatihan, dan update terbaru IMTC.
+            Update kegiatan dan pelatihan terbaru IMTC.
           </p>
 
           <Link
@@ -170,10 +167,11 @@ export default function Footer() {
         </div>
       </Container>
 
-      {/* Bottom bar */}
       <div className='border-t bg-background/60'>
         <Container className='flex flex-col gap-3 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between'>
-          <div>© {new Date().getFullYear()} Indonesia MICE Training Center</div>
+          <div>
+            © {new Date().getFullYear()} {IMTC_CONTACT.brand.long}
+          </div>
 
           <div className='flex flex-wrap gap-4'>
             <Link href='#' className='hover:text-foreground'>

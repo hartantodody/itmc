@@ -175,7 +175,8 @@
   }
 
   .bg-imtc-plan {
-    background: radial-gradient(
+    background:
+      radial-gradient(
         1200px 600px at 20% 30%,
         rgba(255, 255, 255, 0.12),
         transparent 60%
@@ -192,18 +193,21 @@
     isolation: isolate;
     overflow: hidden;
     background:
-    /* top vignette */ radial-gradient(
-        ellipse at top,
-        rgba(0, 0, 0, 0.38),
-        transparent 55%
-      ),
-      /* BIG white horizon (shorter & cleaner) */
+    /* top vignette */
+      radial-gradient(ellipse at top, rgba(0, 0, 0, 0.38), transparent 55%),
+      /* BLUE horizon glow (pengganti putih) */
         radial-gradient(
-          ellipse 150% 80% at 50% 110%,
-          rgba(255, 255, 255, 0.98) 0%,
-          rgba(255, 255, 255, 0.92) 22%,
-          rgba(255, 255, 255, 0.55) 38%,
-          rgba(255, 255, 255, 0) 70%
+          ellipse 140% 70% at 50% 108%,
+          color-mix(in oklab, var(--primary) 55%, white) 0%,
+          color-mix(in oklab, var(--primary) 45%, black) 28%,
+          color-mix(in oklab, var(--primary) 28%, black) 45%,
+          rgba(0, 0, 0, 0) 70%
+        ),
+      /* subtle accent spark (opsional tapi cakep) */
+        radial-gradient(
+          circle 420px at 62% 92%,
+          color-mix(in oklab, var(--accent) 35%, transparent),
+          transparent 65%
         ),
       /* base blue depth */
         linear-gradient(
@@ -214,36 +218,76 @@
         );
   }
 
-  /* optional: highlight yang kamu pakai di kedua section, biar konsisten */
-  /* .bg-imtc-horizon::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: radial-gradient(
-        1500px 600px at 50% -50%,
-        rgba(255, 255, 255, 0.12),
-        transparent 60%
-      ),
-      linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.25),
-        transparent 35%,
-        rgba(0, 0, 0, 0.35)
-      );
-  } */
+  @keyframes imtc-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-18px);
+    }
+  }
 
-  /* .bg-imtc-horizon::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-    height: 120px;
-    background: linear-gradient(to top, rgba(255, 255, 255, 1), transparent);
-    pointer-events: none;
-  } */
+  @keyframes imtc-fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes imtc-slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes imtc-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes imtc-shimmer {
+    0% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(120%);
+    }
+  }
+
+  /* helper classes */
+  .imtc-anim-fade-in-up {
+    animation: imtc-fade-in-up 0.7s ease-out forwards;
+  }
+
+  .imtc-anim-slide-in-left {
+    animation: imtc-slide-in-left 0.85s ease-out forwards;
+  }
+
+  .imtc-anim-fade-in {
+    animation: imtc-fade-in 0.7s ease-out forwards;
+  }
+
+  .imtc-anim-float {
+    animation: imtc-float 3.2s ease-in-out infinite;
+  }
+
+  .imtc-anim-shimmer {
+    animation: imtc-shimmer 3.2s ease-in-out infinite;
+  }
 
   @keyframes scroll {
     0% {
@@ -266,4 +310,80 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 60px;
+}
+
+/* ===== Animated gradient border (stable & visible) ===== */
+
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.animated-border {
+  position: relative;
+  border-radius: 28px;
+  padding: 2px; /* ✅ ini bikin ring pasti kelihatan */
+  background: conic-gradient(
+    from var(--border-angle),
+    color-mix(in oklab, var(--primary) 100%, white 0%),
+    color-mix(in oklab, var(--accent) 100%, white 0%),
+    color-mix(in oklab, var(--primary) 100%, white 0%)
+  );
+  animation: imtc-border-spin 3.5s linear infinite;
+}
+
+.animated-border-inner {
+  height: 100%;
+  border-radius: calc(28px - 2px);
+  overflow: hidden; /* ✅ biar isi card gak “nyenggol” ring */
+}
+
+/* pastikan card ngisi wrapper */
+.animated-border-inner > * {
+  height: 100%;
+}
+
+@keyframes imtc-border-spin {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+/* ===== Marquee Clients ===== */
+
+@keyframes imtc-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-imtc-marquee {
+  animation: imtc-marquee 32s linear infinite;
+}
+
+.animate-imtc-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes imtc-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+.imtc-anim-twinkle {
+  /* digabung sama float, jadi di style kita kasih 2 duration & 2 delay */
+  animation-name: imtc-float, imtc-twinkle;
+  animation-timing-function: ease-in-out, ease-in-out;
+  animation-iteration-count: infinite, infinite;
 }

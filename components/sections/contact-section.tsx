@@ -1,19 +1,41 @@
 'use client'
 
-import Image from 'next/image'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import Container from '@/components/common/container'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 
+import { IMTC_CONTACT } from '@/data/contact.data'
+import {
+  buildContactMessage,
+  buildWhatsAppUrl,
+  type ContactIntent
+} from '@/lib/contact-templates'
+
 export default function ContactSection() {
+  const [name, setName] = useState('')
+  const [contact, setContact] = useState('')
+  const [notes, setNotes] = useState('')
+  const [intent, setIntent] = useState<ContactIntent>('ask-recommendation')
+
+  const message = useMemo(() => {
+    return buildContactMessage(intent, {
+      name,
+      phoneOrEmail: contact,
+      targetProgram: 'Custom', // nanti kalau kamu punya paket list, isi dari dropdown paket
+      notes
+    })
+  }, [intent, name, contact, notes])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    toast.success(
-      'Pesan terkirim (dummy). Nanti bisa disambung ke WhatsApp / email.'
-    )
+
+    const url = buildWhatsAppUrl(message)
+    window.open(url, '_blank', 'noopener,noreferrer')
+
+    toast.success('Membuka WhatsApp untuk mengirim pesan…')
   }
 
   return (
@@ -21,14 +43,8 @@ export default function ContactSection() {
       id='kontak'
       className='relative isolate overflow-hidden py-16 sm:py-20 bg-imtc-plan text-primary-foreground'
     >
-      {/* BACKGROUND LAYERS */}
       <div className='pointer-events-none absolute inset-0 -z-10'>
-        {/* watermark icon (quarter visible) */}
-
-        {/* soft vignette biar teks kebaca */}
         <div className='absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/30' />
-
-        {/* optional: diagonal darker side (lebih halus, jangan 50%) */}
         <div className='absolute right-0 top-0 h-full w-[42%] bg-black/20 [clip-path:polygon(25%_0,100%_0,100%_100%,0_100%)]' />
       </div>
 
@@ -48,25 +64,58 @@ export default function ContactSection() {
             <div className='grid gap-4 sm:grid-cols-2'>
               <div className='space-y-1'>
                 <div className='text-xs text-primary-foreground/70'>Email</div>
-                <div className='font-mono text-sm text-white'>
-                  info@imtc.co.id
-                </div>
+                <a
+                  href={IMTC_CONTACT.email.mailto}
+                  className='font-mono text-sm text-white hover:underline'
+                >
+                  {IMTC_CONTACT.email.address}
+                </a>
               </div>
 
               <div className='space-y-1'>
                 <div className='text-xs text-primary-foreground/70'>
                   WhatsApp
                 </div>
-                <div className='font-mono text-sm text-white'>
-                  +62 xxx-xxxx-xxxx
-                </div>
+                <a
+                  href={`https://wa.me/${IMTC_CONTACT.whatsapp.e164}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-mono text-sm text-white hover:underline'
+                >
+                  {IMTC_CONTACT.whatsapp.display}
+                </a>
+                {IMTC_CONTACT.whatsapp.picName ? (
+                  <div className='text-xs text-primary-foreground/70'>
+                    a.n {IMTC_CONTACT.whatsapp.picName}
+                  </div>
+                ) : null}
               </div>
             </div>
 
-            <div className='mt-4 space-y-1'>
-              <div className='text-xs text-primary-foreground/70'>Lokasi</div>
-              <div className='text-sm text-white/90'>
-                Indonesia (detail menyusul)
+            <div className='mt-4 grid gap-4 sm:grid-cols-2'>
+              <div className='space-y-1'>
+                <div className='text-xs text-primary-foreground/70'>
+                  Instagram
+                </div>
+                <a
+                  href={IMTC_CONTACT.instagram.url}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-mono text-sm text-white hover:underline'
+                >
+                  @{IMTC_CONTACT.instagram.handle}
+                </a>
+              </div>
+
+              <div className='space-y-1'>
+                <div className='text-xs text-primary-foreground/70'>
+                  {IMTC_CONTACT.address.label}
+                </div>
+                <div className='text-sm text-white/90'>
+                  {IMTC_CONTACT.address.lines.map((t) => (
+                    <div key={t}>{t}</div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -78,9 +127,36 @@ export default function ContactSection() {
           className='rounded-3xl border border-white/15 bg-white/10 p-6 backdrop-blur sm:p-7'
         >
           <div className='space-y-4'>
+            {/* (optional) intent switch sederhana */}
+            <div className='space-y-2'>
+              <label className='text-sm font-medium text-white'>
+                Tujuan pesan
+              </label>
+              <select
+                value={intent}
+                onChange={(e) => setIntent(e.target.value as ContactIntent)}
+                className='h-10 w-full rounded-md border border-white/15 bg-white/10 px-3 text-sm text-white outline-none'
+              >
+                <option value='ask-recommendation'>
+                  Minta rekomendasi paket
+                </option>
+                <option value='request-quotation'>
+                  Minta penawaran (quotation)
+                </option>
+                <option value='in-house'>In-house training (custom)</option>
+                <option value='certification'>
+                  Info sertifikasi (opsional)
+                </option>
+                <option value='schedule-call'>Jadwalkan call</option>
+                <option value='general'>Pertanyaan umum</option>
+              </select>
+            </div>
+
             <div className='space-y-2'>
               <label className='text-sm font-medium text-white'>Nama</label>
               <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder='Nama kamu'
                 className='border-white/15 bg-white/10 text-white placeholder:text-white/60'
               />
@@ -91,6 +167,8 @@ export default function ContactSection() {
                 Email / WhatsApp
               </label>
               <Input
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
                 placeholder='contoh: email@domain.com / 08xxxx'
                 className='border-white/15 bg-white/10 text-white placeholder:text-white/60'
               />
@@ -101,6 +179,8 @@ export default function ContactSection() {
                 Kebutuhan
               </label>
               <Textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
                 placeholder='Ceritakan kebutuhan pelatihan...'
                 rows={5}
                 className='border-white/15 bg-white/10 text-white placeholder:text-white/60'
@@ -111,11 +191,12 @@ export default function ContactSection() {
               type='submit'
               className='w-full bg-white text-black hover:bg-white/90'
             >
-              Kirim
+              Kirim via WhatsApp
             </Button>
 
             <p className='text-xs text-primary-foreground/70'>
-              *Form ini dummy. Nanti bisa dihubungkan ke WhatsApp / email / API.
+              Pesan akan dibuat otomatis dan dibuka di WhatsApp (bisa diedit
+              sebelum kirim).
             </p>
           </div>
         </form>
