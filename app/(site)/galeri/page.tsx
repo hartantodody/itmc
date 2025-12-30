@@ -1,7 +1,9 @@
 import Container from '@/components/common/container'
-import GallerySection from '@/components/sections/gallery-section'
+import PageHeader from '@/components/common/page-header'
+import GalleryAlbumGrid from '@/components/sections/gallery-album-grid'
 import { createPageMetadata } from '@/lib/seo-helpers'
-import { Metadata } from 'next'
+import { BookOpen } from 'lucide-react'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Galeri',
@@ -12,17 +14,14 @@ export const metadata: Metadata = createPageMetadata({
 export default function GalleryPage() {
   return (
     <main className='py-16 sm:py-20'>
-      <Container className='space-y-8'>
-        <div className='space-y-2'>
-          <h1 className='font-heading text-4xl font-extrabold tracking-tight sm:text-5xl'>
-            Galeri Kegiatan
-          </h1>
-          <p className='max-w-2xl text-muted-foreground'>
-            Dokumentasi kegiatan pelatihan dan program IMTC.
-          </p>
-        </div>
+      <Container className='space-y-12'>
+        <PageHeader
+          badge={{ label: 'Dokumentasi kegiatan', icon: BookOpen }}
+          title='Galeri Kegiatan IMTC'
+          description='Pilih kegiatan untuk melihat foto dokumentasi.'
+        />
 
-        <GallerySection />
+        <GalleryAlbumGrid />
       </Container>
     </main>
   )

@@ -1,31 +1,45 @@
 import type { Image as SanityImage } from 'sanity'
 
+/** @see sanity/schemaTypes/galleryAlbum.ts */
 export type AlbumImageItem = SanityImage & {
   _key: string
   alt?: string
   caption?: string
 }
 
-export type AlbumDoc = {
+export type AlbumListItem = {
   _id: string
   title: string
+  slug: { current: string }
+  category?: string
+  year?: string
+  order?: number
+  coverImage?: SanityImage
+  imagesCount?: number
+}
+
+export type AlbumDetail = {
+  _id: string
+  title: string
+  slug: { current: string }
   category?: string
   year?: string
   order?: number
   images?: AlbumImageItem[]
 }
 
-export type GalleryTile = {
+export type MiniGalleryAlbum = {
   _id: string
-  _key: string
   title: string
+  slug: string
   category?: string
   year?: string
-  alt?: string
-  caption?: string
-  image: SanityImage
+  order?: number
+  coverImage?: (SanityImage & { alt?: string }) | null
+  fallbackImage?: (SanityImage & { _key?: string; alt?: string }) | null
 }
 
+/** @see sanity/schemaTypes/trainingPackage.ts */
 export type TrainingPackage = {
   _id: string
   title: string

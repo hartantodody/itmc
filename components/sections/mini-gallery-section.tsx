@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 import { client as sanityClient } from '@/sanity/lib/client'
 import { miniGalleryAlbumsQuery } from '@/sanity/lib/queries'
-import type { AlbumDoc } from '@/sanity/types'
+import type { MiniGalleryAlbum } from '@/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
 
 const TILE_CLASS: Record<string, string> = {
@@ -19,24 +19,14 @@ const TILE_CLASS: Record<string, string> = {
 }
 
 export default async function MiniGallerySection() {
-  const albums = await sanityClient.fetch<AlbumDoc[]>(
-    miniGalleryAlbumsQuery,
-    {},
-    { next: { revalidate: 60 } }
-  )
+  const albums =
+    (await sanityClient.fetch<MiniGalleryAlbum[]>(
+      miniGalleryAlbumsQuery,
+      {},
+      { next: { revalidate: 60 } }
+    )) ?? []
 
-  const tiles = albums
-    .flatMap((a) =>
-      (a.images ?? [])
-        .filter((img) => Boolean(img?.asset))
-        .map((img) => ({
-          _key: img._key,
-          title: a.title,
-          alt: img.alt,
-          image: img
-        }))
-    )
-    .slice(0, 4)
+  const tiles = albums.slice(0, 4)
 
   return (
     <section className='relative overflow-hidden py-16 sm:py-20 bg-transparent text-primary-foreground'>
@@ -61,7 +51,7 @@ export default async function MiniGallerySection() {
                 className='bg-primary text-white hover:bg-primary/90'
               >
                 <Link href='/galeri'>
-                  Get started <ArrowRight className='ml-2 size-4' />
+                  Lihat semua <ArrowRight className='ml-2 size-4' />
                 </Link>
               </Button>
             </div>
@@ -75,17 +65,21 @@ export default async function MiniGallerySection() {
                 'auto-rows-[120px] sm:auto-rows-[140px] lg:auto-rows-[160px]'
               )}
             >
-              {tiles.map((item, idx) => {
-                const img = urlFor(item.image)
-                  .width(1200)
-                  .height(900)
-                  .fit('crop')
-                  .auto('format')
-                  .url()
+              {tiles.map((a, idx) => {
+                const cover = a.coverImage ?? a.fallbackImage ?? null
+                const src = cover?.asset
+                  ? urlFor(cover)
+                      .width(1200)
+                      .height(900)
+                      .fit('crop')
+                      .auto('format')
+                      .url()
+                  : null
 
                 return (
-                  <div
-                    key={item._key}
+                  <Link
+                    key={a._id}
+                    href={`/galeri/${a.slug}`}
                     className={cn(
                       'group relative overflow-hidden rounded-[28px]',
                       'border border-white/12 bg-white/5 backdrop-blur',
@@ -93,15 +87,36 @@ export default async function MiniGallerySection() {
                       'hover:-translate-y-0.5 hover:shadow-lg',
                       TILE_CLASS[String(idx)] ?? 'sm:col-span-1 sm:row-span-1'
                     )}
+                    aria-label={`Open album: ${a.title}`}
                   >
                     <div className='absolute inset-0'>
-                      <Image
-                        src={img}
-                        alt={item.alt ?? item.title ?? 'Gallery image'}
-                        fill
-                        sizes='(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 25vw'
-                        className='object-cover transition-transform duration-500 group-hover:scale-[1.05]'
-                      />
+                      {src ? (
+                        <Image
+                          src={src}
+                          alt={cover?.alt ?? a.title}
+                          fill
+                          sizes='(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 25vw'
+                          className='object-cover transition-transform duration-500 group-hover:scale-[1.05]'
+                        />
+                      ) : (
+                        <div className='relative h-full w-full overflow-hidden'>
+                          {/* kecil aja sesuai request */}
+                          <div className='pointer-events-none absolute inset-0'>
+                            <div className='absolute -top-12 left-1/2 h-40 w-[22rem] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl' />
+                            <div className='absolute -bottom-12 right-[-15%] h-36 w-[20rem] rounded-full bg-accent/20 blur-3xl' />
+                          </div>
+
+                          <div className='absolute inset-0 grid place-items-center'>
+                            <Image
+                              src='/images/imtc-icon.webp'
+                              alt='IMTC'
+                              width={72}
+                              height={72}
+                              className='opacity-90'
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className='absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent' />
@@ -109,13 +124,15 @@ export default async function MiniGallerySection() {
 
                     <div className='absolute inset-x-0 bottom-0 p-4'>
                       <div className='font-heading text-sm font-extrabold text-white drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5'>
-                        {item.title}
+                        {a.title}
                       </div>
                       <div className='mt-1 text-xs text-white/80'>
-                        Dokumentasi • IMTC
+                        {[a.category ?? null, a.year ?? null]
+                          .filter(Boolean)
+                          .join(' • ') || 'Dokumentasi • IMTC'}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
             </div>

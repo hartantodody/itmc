@@ -1,14 +1,28 @@
 import { groq } from 'next-sanity'
 
-export const galleryAlbumByIndexQuery = groq`
+export const galleryAlbumListQuery = groq`
   *[_type == "galleryAlbum"]
-  | order(order asc, year desc, _createdAt desc)
-  [$index...$end]{
+  | order(order asc, year desc, _createdAt desc){
     _id,
     title,
+    slug,
     category,
     year,
     order,
+    coverImage,
+    "imagesCount": count(images)
+  }
+`
+
+export const galleryAlbumBySlugQuery = groq`
+  *[_type == "galleryAlbum" && slug.current == $slug][0]{
+    _id,
+    title,
+    slug,
+    category,
+    year,
+    order,
+    coverImage,
     images[]{
       _key,
       alt,
@@ -20,22 +34,38 @@ export const galleryAlbumByIndexQuery = groq`
   }
 `
 
-export const miniGalleryAlbumsQuery = /* groq */ `
-*[_type == "galleryAlbum"] | order(order asc, _createdAt desc) [0...4] {
-  _id,
-  title,
-  category,
-  year,
-  order,
-  images[]{
-    _key,
-    alt,
-    caption,
-    asset,
-    crop,
-    hotspot
+export const galleryAlbumSlugsQuery = groq`
+  *[_type == "galleryAlbum" && defined(slug.current)]{
+    "slug": slug.current,
+    _updatedAt
+  } | order(_updatedAt desc)
+`
+
+export const miniGalleryAlbumsQuery = groq`
+  *[_type == "galleryAlbum" && defined(slug.current)]
+  | order(order asc, year desc, _createdAt desc)
+  [0...4]{
+    _id,
+    title,
+    "slug": slug.current,
+    category,
+    year,
+    order,
+    coverImage{
+      alt,
+      asset,
+      crop,
+      hotspot
+    },
+    "fallbackImage": images[0]{
+      _key,
+      alt,
+      caption,
+      asset,
+      crop,
+      hotspot
+    }
   }
-}
 `
 
 export const trainingPackagesQuery = groq`

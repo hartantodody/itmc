@@ -1,29 +1,46 @@
-// sanity/schemaTypes/galleryAlbumType.ts
 import { defineField, defineType } from 'sanity'
 
 export const galleryAlbumType = defineType({
   name: 'galleryAlbum',
-  title: 'Gallery Album',
+  title: 'Gallery Activity',
   type: 'document',
   fields: [
     defineField({
       name: 'title',
-      title: 'Album Title',
+      title: 'Activity Title',
       type: 'string',
       validation: (r) => r.required()
     }),
+
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: { source: 'title', maxLength: 96 },
+      validation: (r) => r.required()
+    }),
+
     defineField({ name: 'category', title: 'Category', type: 'string' }),
+
     defineField({
       name: 'year',
       title: 'Year',
       type: 'string',
       description: 'Misal: 2024 atau "2024/2025"'
     }),
+
     defineField({
       name: 'order',
       title: 'Order',
       type: 'number',
       initialValue: 0
+    }),
+
+    defineField({
+      name: 'coverImage',
+      title: 'Cover Image (optional)',
+      type: 'image',
+      options: { hotspot: true }
     }),
 
     defineField({
@@ -39,14 +56,12 @@ export const galleryAlbumType = defineType({
               name: 'alt',
               title: 'Alt text',
               type: 'string',
-              description: 'Disarankan untuk aksesibilitas & SEO',
               validation: (r) => r.warning('Sebaiknya diisi untuk SEO.')
             }),
             defineField({
               name: 'caption',
               title: 'Caption',
-              type: 'string',
-              description: 'Opsional'
+              type: 'string'
             })
           ]
         }
