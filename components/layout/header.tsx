@@ -14,8 +14,7 @@ const NAV = [
   { label: 'Tentang', href: '/#tentang', hash: 'tentang' },
   { label: 'Pelatihan', href: '/pelatihan' },
   { label: 'Klien', href: '/#klien', hash: 'klien' },
-  { label: 'Galeri', href: '/galeri' },
-  { label: 'Kontak', href: '/#kontak', hash: 'kontak' }
+  { label: 'Galeri', href: '/galeri' }
 ] as const
 
 const SECTION_IDS = ['tentang', 'klien', 'kontak'] as const

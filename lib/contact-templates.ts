@@ -33,13 +33,19 @@ export function buildContactMessage(
   intent: ContactIntent,
   payload: ContactMessagePayload = {}
 ) {
-  const opener = payload.name
-    ? `Halo IMTC, saya ${payload.name}.`
-    : `Halo IMTC.`
+  // opener disusun: perusahaan dulu, lalu nama (kalau ada)
+  const opener = payload.org
+    ? payload.name
+      ? `Halo IMTC, saya ${payload.name} dari ${payload.org}.`
+      : `Halo IMTC, dari ${payload.org}.`
+    : payload.name
+      ? `Halo IMTC, saya ${payload.name}.`
+      : `Halo IMTC.`
 
   const common = compactLines([
     '',
-    line('Instansi/Perusahaan', payload.org),
+    line('Nama perusahaan/instansi', payload.org),
+    line('Nama', payload.name),
     line('Peran', payload.role),
     line('Kontak saya', payload.phoneOrEmail),
     line('Kota', payload.city),

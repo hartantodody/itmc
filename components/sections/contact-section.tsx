@@ -15,19 +15,21 @@ import {
 } from '@/lib/contact-templates'
 
 export default function ContactSection() {
-  const [name, setName] = useState('')
+  const [org, setOrg] = useState('') // Nama perusahaan
+  const [name, setName] = useState('') // Nama PIC
   const [contact, setContact] = useState('')
   const [notes, setNotes] = useState('')
   const [intent, setIntent] = useState<ContactIntent>('ask-recommendation')
 
   const message = useMemo(() => {
     return buildContactMessage(intent, {
+      org,
       name,
       phoneOrEmail: contact,
       targetProgram: 'Custom', // nanti kalau kamu punya paket list, isi dari dropdown paket
       notes
     })
-  }, [intent, name, contact, notes])
+  }, [intent, org, name, contact, notes])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -127,7 +129,6 @@ export default function ContactSection() {
           className='rounded-3xl border border-white/15 bg-white/10 p-6 backdrop-blur sm:p-7'
         >
           <div className='space-y-4'>
-            {/* (optional) intent switch sederhana */}
             <div className='space-y-2'>
               <label className='text-sm font-medium text-white'>
                 Tujuan pesan
@@ -153,11 +154,23 @@ export default function ContactSection() {
             </div>
 
             <div className='space-y-2'>
+              <label className='text-sm font-medium text-white'>
+                Nama Perusahaan
+              </label>
+              <Input
+                value={org}
+                onChange={(e) => setOrg(e.target.value)}
+                placeholder='Nama perusahaan/instansi'
+                className='border-white/15 bg-white/10 text-white placeholder:text-white/60'
+              />
+            </div>
+
+            <div className='space-y-2'>
               <label className='text-sm font-medium text-white'>Nama</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder='Nama kamu'
+                placeholder='Nama kamu (PIC)'
                 className='border-white/15 bg-white/10 text-white placeholder:text-white/60'
               />
             </div>
