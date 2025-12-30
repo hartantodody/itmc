@@ -9,7 +9,12 @@ export const galleryAlbumListQuery = groq`
     category,
     year,
     order,
-    coverImage,
+    coverImage{
+      alt,
+      asset,
+      crop,
+      hotspot
+    },
     "imagesCount": count(images)
   }
 `

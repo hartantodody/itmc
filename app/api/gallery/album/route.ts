@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import { client as sanityClient } from '@/sanity/lib/client'
 import { galleryAlbumBySlugQuery } from '@/sanity/lib/queries'
-import type { AlbumDoc } from '@/sanity/types'
+import type { AlbumDetail } from '@/sanity/types'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -18,7 +18,7 @@ export async function GET(req: Request) {
   const offsetRaw = Number(searchParams.get('offset') ?? 0)
   const offset = Number.isFinite(offsetRaw) ? Math.max(offsetRaw, 0) : 0
 
-  const album = await sanityClient.fetch<AlbumDoc | null>(
+  const album = await sanityClient.fetch<AlbumDetail | null>(
     galleryAlbumBySlugQuery,
     { slug },
     { next: { revalidate: 60 } }
