@@ -18,7 +18,7 @@ export default function GalleryPage() {
             Galeri Kegiatan
           </h1>
           <p className='max-w-2xl text-muted-foreground'>
-            Dokumentasi kegiatan pelatihan dan program IMTC. (Foto hanya Dummy)
+            Dokumentasi kegiatan pelatihan dan program IMTC.
           </p>
         </div>
 
