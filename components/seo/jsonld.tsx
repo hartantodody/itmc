@@ -10,7 +10,7 @@ function absoluteUrl(path: string) {
 export function JsonLdBase() {
   // kamu gak punya /logo.png, jadi pakai icon yang ada:
   // public/images/imtc-icon.webp
-  const logoUrl = absoluteUrl('/images/imtc-icon.webp')
+  const logoUrl = absoluteUrl('/favicon-96.png')
 
   const orgId = `${env.siteUrl}#organization`
   const siteId = `${env.siteUrl}#website`

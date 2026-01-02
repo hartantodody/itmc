@@ -57,9 +57,11 @@ export const defaultSeo: Metadata = {
   },
 
   icons: {
-    icon: '/favicon.ico'
-    // kalau kamu punya:
-    // apple: '/apple-touch-icon.png',
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-48.png', type: 'image/png', sizes: '48x48' },
+      { url: '/favicon-96.png', type: 'image/png', sizes: '96x96' }
+    ]
   }
 
   // kalau kamu punya manifest
