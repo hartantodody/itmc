@@ -12,12 +12,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang='id' suppressHydrationWarning>
+    <html lang='id' className='overflow-x-clip' suppressHydrationWarning>
       <head>
         <JsonLdBase />
       </head>
       <body
-        className={`${satoshi.variable} ${cabinetGrotesk.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`overflow-x-hidden ${satoshi.variable} ${cabinetGrotesk.variable} ${jetbrainsMono.variable} antialiased`}
       >
         {children}
       </body>

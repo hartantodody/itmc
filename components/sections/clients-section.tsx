@@ -16,7 +16,7 @@ function MarqueeRow({
   const doubled = useMemo(() => [...items, ...items], [items])
 
   return (
-    <div className='overflow-hidden'>
+    <div className='relative w-full overflow-hidden'>
       <div
         className='flex w-max gap-4 animate-imtc-marquee'
         style={{ animationDuration: `${durationSec}s` }}
@@ -26,7 +26,7 @@ function MarqueeRow({
             key={`${item.name}-${i}`}
             className={cn(
               // ukuran card
-              'min-w-[260px] sm:min-w-[320px]',
+              'shrink-0 min-w-[260px] sm:min-w-[320px]',
               'h-[92px] sm:h-[104px]',
               'flex flex-col items-center justify-center',
 
