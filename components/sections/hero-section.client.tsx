@@ -240,7 +240,7 @@ export default function HeroSection({ albums }: { albums: any[] }) {
             <span>Training & Development for MICE Industry</span>
           </div>
 
-          <h1 className='font-heading font-extrabold tracking-tight text-white'>
+          {/* <h1 className='font-heading font-extrabold tracking-tight text-white'>
             <span className='mb-2 block text-4xl sm:text-5xl lg:text-6xl imtc-anim-slide-in-left'>
               <span>IND</span>
               <span className='inline-flex translate-y-[4px]'>
@@ -270,7 +270,16 @@ export default function HeroSection({ albums }: { albums: any[] }) {
             >
               Training Center
             </span>
-          </h1>
+          </h1> */}
+
+          <h1 className='sr-only'>INDONESIA MICE TRAINING CENTER</h1>
+
+          <img
+            src='/images/imtc-logo-square-white.svg'
+            alt=''
+            aria-hidden='true'
+            className='max-w-[480px] w-full h-auto'
+          />
 
           <p
             className='max-w-xl text-base leading-relaxed text-white/80 sm:text-lg imtc-anim-fade-in'

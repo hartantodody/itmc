@@ -38,8 +38,8 @@ export default function Header() {
 
   const logoSrc =
     onDark || (isHome && !scrolled)
-      ? '/images/imtc-2-long-white.png'
-      : '/images/imtc-2-long-black.png'
+      ? '/images/imtc-logo-long-white.svg'
+      : '/images/imtc-logo-long-default.svg'
 
   // shadow on scroll
   useEffect(() => {
