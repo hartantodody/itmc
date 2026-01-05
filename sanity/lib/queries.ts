@@ -1,5 +1,27 @@
 import { groq } from 'next-sanity'
 
+export const heroSlideshowAlbumsQuery = groq`
+  *[_type == "galleryAlbum" && count(images) > 0]
+  | order(order asc, year desc, _createdAt desc)
+  [0...12]{
+    _id,
+    title,
+    "slug": slug.current,
+    year,
+    category,
+    images[][
+      0...12
+    ]{
+      _key,
+      alt,
+      caption,
+      asset,
+      crop,
+      hotspot
+    }
+  }
+`
+
 export const galleryAlbumListQuery = groq`
   *[_type == "galleryAlbum"]
   | order(order asc, year desc, _createdAt desc){
