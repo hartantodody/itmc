@@ -54,18 +54,25 @@ function StatCard({ icon: Icon, value, label }: StatCardProps) {
   }, [value])
 
   return (
-    <div className='relative overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-3xl p-3.5'>
-      <div className='absolute inset-0 bg-gradient-to-br from-white/7 to-transparent opacity-60' />
+    <div className='relative overflow-hidden rounded-2xl border border-white/12 bg-black/35 backdrop-blur-2xl p-3.5'>
+      {/* scrim: bikin foto di belakang “mati” */}
+      <div className='pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/45' />
+      {/* highlight tipis biar tetap premium */}
+      <div className='pointer-events-none absolute inset-0 bg-gradient-to-br from-white/8 to-transparent opacity-60' />
+
       <div className='relative flex items-center gap-3'>
         <div className='rounded-xl border border-white/15 bg-white/10 p-2'>
           <Icon className='h-5 w-5 text-white' />
         </div>
+
         <div className='leading-tight'>
-          <div className='text-xl font-extrabold text-white'>
+          <div className='text-xl font-extrabold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]'>
             {count}
             <span className='text-white/80'>+</span>
           </div>
-          <div className='text-[11px] text-white/70'>{label}</div>
+          <div className='text-[11px] text-white/75 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]'>
+            {label}
+          </div>
         </div>
       </div>
     </div>
