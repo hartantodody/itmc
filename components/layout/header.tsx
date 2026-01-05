@@ -36,6 +36,11 @@ export default function Header() {
 
   const isHome = pathname === '/'
 
+  const logoSrc =
+    onDark || (isHome && !scrolled)
+      ? '/images/imtc-2-long-white.png'
+      : '/images/imtc-2-long-black.png'
+
   // shadow on scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -183,7 +188,7 @@ export default function Header() {
       </div>
 
       <Container className='flex h-16 items-center justify-between'>
-        <Link href='/' className='flex items-center gap-2'>
+        {/* <Link href='/' className='flex items-center gap-2'>
           <div
             className={cn(
               'grid size-9 place-items-center rounded-xl border shadow-sm',
@@ -220,6 +225,16 @@ export default function Header() {
               Indonesia MICE Training Center
             </div>
           </div>
+        </Link> */}
+        <Link href='/' className='flex items-center'>
+          <Image
+            src={logoSrc}
+            alt='Indonesia MICE Training Center'
+            width={260}
+            height={32}
+            priority
+            className='h-[44px] w-auto object-contain'
+          />
         </Link>
 
         {/* Desktop nav */}
