@@ -2,7 +2,6 @@
 
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import Container from '@/components/common/container'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,7 +9,7 @@ import {
   Award,
   Users,
   TrendingUp,
-  LucideIcon,
+  type LucideIcon,
   SquareCheckBig
 } from 'lucide-react'
 import { cn, safeImageUrl } from '@/lib/utils'
@@ -55,9 +54,7 @@ function StatCard({ icon: Icon, value, label }: StatCardProps) {
 
   return (
     <div className='relative overflow-hidden rounded-2xl border border-white/12 bg-black/35 backdrop-blur-2xl p-3.5'>
-      {/* scrim: bikin foto di belakang “mati” */}
       <div className='pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/45' />
-      {/* highlight tipis biar tetap premium */}
       <div className='pointer-events-none absolute inset-0 bg-gradient-to-br from-white/8 to-transparent opacity-60' />
 
       <div className='relative flex items-center gap-3'>
@@ -138,13 +135,38 @@ function makeParticles(seedStr: string, count = 18): Particle[] {
   })
 }
 
-export default function HeroSection({ albums }: { albums: any[] }) {
+/** 👇 data shape dari Sanity */
+type HeroStatFromSanity = {
+  icon: 'Users' | 'Award' | 'TrendingUp'
+  value: number
+  label: string
+}
+
+/** 👇 map icon string -> Lucide component */
+const HERO_ICON_MAP: Record<HeroStatFromSanity['icon'], LucideIcon> = {
+  Users,
+  Award,
+  TrendingUp
+}
+
+/** fallback kalau Sanity belum diisi */
+const FALLBACK_STATS: HeroStatFromSanity[] = [
+  { icon: 'Users', value: 1500, label: 'Peserta Terlatih' },
+  { icon: 'Award', value: 40, label: 'Program Pelatihan' },
+  { icon: 'TrendingUp', value: 20, label: 'Institusi & Mitra' }
+]
+
+export default function HeroSection({
+  albums,
+  stats
+}: {
+  albums: any[]
+  stats?: HeroStatFromSanity[]
+}) {
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
   const rafRef = useRef<number | null>(null)
 
-  // ✅ stable seed, same on server + client -> NO hydration mismatch
   const seedId = useId()
-
   const particles = useMemo(() => makeParticles(seedId, 18), [seedId])
 
   useEffect(() => {
@@ -167,11 +189,21 @@ export default function HeroSection({ albums }: { albums: any[] }) {
     }
   }, [])
 
-  const STATS = [
-    { icon: Users, value: 1500, label: 'Peserta Terlatih' },
-    { icon: Award, value: 40, label: 'Program Pelatihan' },
-    { icon: TrendingUp, value: 20, label: 'Institusi & Mitra' }
-  ] as const
+  /** ✅ stats final yang dipakai render */
+  const STATS = useMemo(() => {
+    const raw = stats?.length ? stats : FALLBACK_STATS
+
+    return raw
+      .filter(
+        (s) =>
+          Boolean(s?.label) && typeof s?.value === 'number' && Boolean(s?.icon)
+      )
+      .map((s) => ({
+        icon: HERO_ICON_MAP[s.icon] ?? Users,
+        value: s.value,
+        label: s.label
+      }))
+  }, [stats])
 
   const slideshowImages = useMemo(() => {
     return pickHeroSlideshowImages(albums ?? [], 6)
@@ -240,38 +272,6 @@ export default function HeroSection({ albums }: { albums: any[] }) {
             <span>Training & Development for MICE Industry</span>
           </div>
 
-          {/* <h1 className='font-heading font-extrabold tracking-tight text-white'>
-            <span className='mb-2 block text-4xl sm:text-5xl lg:text-6xl imtc-anim-slide-in-left'>
-              <span>IND</span>
-              <span className='inline-flex translate-y-[4px]'>
-                <Image
-                  src='/images/imtc-icon.webp'
-                  alt=''
-                  aria-hidden='true'
-                  width={56}
-                  height={56}
-                  priority
-                  className='h-[1em] w-[1em] object-contain'
-                />
-              </span>
-              <span>NESIA</span>
-            </span>
-
-            <span
-              className='block text-5xl sm:text-6xl lg:text-7xl bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent imtc-anim-slide-in-left'
-              style={{ animationDelay: '120ms' }}
-            >
-              MICE
-            </span>
-
-            <span
-              className='block text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent imtc-anim-slide-in-left'
-              style={{ animationDelay: '220ms' }}
-            >
-              Training Center
-            </span>
-          </h1> */}
-
           <h1 className='sr-only'>INDONESIA MICE TRAINING CENTER</h1>
 
           <img
@@ -336,7 +336,6 @@ export default function HeroSection({ albums }: { albums: any[] }) {
           <div className='relative'>
             <div className='relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-white/18 bg-white/10 shadow-2xl backdrop-blur-xl'>
               <div className='absolute inset-0 imtc-anim-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent' />
-
               <HeroSlideshow images={slideshowImages} buildUrl={safeImageUrl} />
             </div>
 
@@ -344,7 +343,7 @@ export default function HeroSection({ albums }: { albums: any[] }) {
             <div className='absolute -bottom-5 left-4 right-4 hidden grid-cols-3 gap-2 lg:grid imtc-anim-fade-in'>
               {STATS.map((s, idx) => (
                 <StatCard
-                  key={s.label}
+                  key={`${s.label}-${idx}`}
                   icon={s.icon}
                   value={s.value}
                   label={s.label}
@@ -358,7 +357,7 @@ export default function HeroSection({ albums }: { albums: any[] }) {
           <div className='mt-5 grid grid-cols-3 gap-2 px-1 sm:px-0 lg:hidden imtc-anim-fade-in'>
             {STATS.map((s, idx) => (
               <StatCard
-                key={s.label}
+                key={`${s.label}-${idx}`}
                 icon={s.icon}
                 value={s.value}
                 label={s.label}

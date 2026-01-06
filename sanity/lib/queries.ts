@@ -130,3 +130,13 @@ export const trainingPackagesPreviewQuery = groq`
     highlights
   }
 `
+
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings"][0]{
+    heroStats[]{
+      icon,
+      value,
+      label
+    }
+  }
+`
