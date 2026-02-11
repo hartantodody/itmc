@@ -1,4 +1,5 @@
 import type { Image as SanityImage } from 'sanity'
+import type { PortableTextBlock } from '@portabletext/types'
 
 /** @see sanity/schemaTypes/galleryAlbum.ts */
 export type AlbumImageItem = SanityImage & {
@@ -67,4 +68,14 @@ export type TrainingPackagePreview = Pick<
   '_id' | 'title' | 'desc' | 'recommended' | 'level' | 'format' | 'durationText'
 > & {
   // slug?: string // ✅ kalau query preview nanti mau flatten slug.current -> string
+}
+
+export type AnnouncementItem = {
+  _id: string
+  title: string
+  slug: string
+  excerpt?: string
+  publishedAt: string
+  coverImage?: any
+  content?: PortableTextBlock[]
 }

@@ -5,6 +5,7 @@ import Container from '../common/container'
 import { cn } from '@/lib/utils'
 import { ClientItem } from '@/interfaces/client'
 import { CLIENTS } from '@/data/clients.data'
+import { Group, User, Users } from 'lucide-react'
 
 function MarqueeRow({
   items,
@@ -62,8 +63,9 @@ export default function ClientsSection() {
       <Container className='space-y-10'>
         {/* centered header */}
         <div className='mx-auto max-w-3xl space-y-4 text-center'>
-          <div className='inline-flex items-center rounded-full border border-primary/15 bg-primary/10 px-3 py-1 text-xs text-foreground/75 backdrop-blur'>
-            Partner & kolaborasi
+          <div className='mx-auto inline-flex items-center gap-2 rounded-full border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur'>
+            <Users className='mr-2 h-4 w-4 text-accent' /> Klien & Partner &
+            kolaborasi
           </div>
 
           <h2 className='font-heading text-3xl font-extrabold tracking-tight sm:text-5xl'>

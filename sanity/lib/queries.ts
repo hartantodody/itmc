@@ -140,3 +140,36 @@ export const siteSettingsQuery = groq`
     }
   }
 `
+
+export const latestAnnouncementsQuery = /* groq */ `
+*[_type == "announcement"] | order(publishedAt desc)[0...$limit]{
+  _id,
+  title,
+  "slug": slug.current,
+  publishedAt,
+  excerpt,
+
+  // optional helper buat preview cepat
+  "firstImage": images[0].image{
+    asset->{
+      _id,
+      url,
+      metadata { dimensions { width, height } }
+    }
+  },
+
+  images[]{
+    alt,
+    caption,
+    image{
+      asset->{
+        _id,
+        url,
+        metadata { dimensions { width, height } }
+      }
+    }
+  },
+
+  description
+}
+`

@@ -8,6 +8,7 @@ import TrainingPreviewSection from '@/components/sections/training-preview-secti
 import ClientsSection from '@/components/sections/clients-section'
 import ContactSection from '@/components/sections/contact-section'
 import MiniGallerySection from '@/components/sections/mini-gallery-section'
+import AnnouncementSection from '@/components/sections/announcement-section'
 
 export const metadata: Metadata = createPageMetadata({
   title: 'IMTC',
@@ -21,6 +22,7 @@ export default function HomePage() {
     <main>
       <HeroSection />
       <AboutSection />
+      <AnnouncementSection />
       <ClientsSection />
       <TrainingPreviewSection />
       <MiniGallerySection />

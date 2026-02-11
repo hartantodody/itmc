@@ -3,7 +3,16 @@ import { trainingPackageType } from './trainingPackage'
 import { galleryAlbumType } from './galleryAlbum'
 import { siteSettings } from './siteSettings'
 import { heroStat } from './heroStat'
+import { announcement } from './announcement'
+import { announcementImage } from './announcementImage'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [siteSettings, heroStat, galleryAlbumType, trainingPackageType]
+  types: [
+    siteSettings,
+    heroStat,
+    galleryAlbumType,
+    trainingPackageType,
+    announcement,
+    announcementImage
+  ]
 }
