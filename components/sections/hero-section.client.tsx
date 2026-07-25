@@ -12,8 +12,11 @@ import {
   type LucideIcon,
   SquareCheckBig
 } from 'lucide-react'
-import { cn, safeImageUrl } from '@/lib/utils'
-import { pickHeroSlideshowImages } from '@/lib/gallery'
+import { cn } from '@/lib/utils'
+// ⛔️ [DINONAKTIFKAN] Dipakai slideshow versi galeri Sanity (lihat di bawah).
+// Jangan dihapus — biar gampang balik ke sumber galeri kalau dibutuhkan lagi.
+// import { safeImageUrl } from '@/lib/utils'
+// import { pickHeroSlideshowImages } from '@/lib/gallery'
 import { HeroSlideshow } from '../common/hero-slideshow'
 
 type StatCardProps = {
@@ -156,11 +159,37 @@ const FALLBACK_STATS: HeroStatFromSanity[] = [
   { icon: 'TrendingUp', value: 20, label: 'Institusi & Mitra' }
 ]
 
+/**
+ * ✅ [BARU] Sumber slideshow hero: image STATIS dari public/images/hero/.
+ * File: hero-1.JPG ... hero-8.JPG.
+ * ⚠️ Perhatikan ekstensi ".JPG" (huruf besar) — penting untuk hosting
+ * case-sensitive seperti Vercel/Linux. Kalau file di-rename ke .jpg,
+ * update juga di sini.
+ */
+const HERO_STATIC_IMAGES: { src: string; alt: string }[] = Array.from(
+  { length: 8 },
+  (_, i) => ({
+    src: `/images/hero/hero-${i + 1}.JPG`,
+    alt: `Dokumentasi kegiatan IMTC ${i + 1}`
+  })
+)
+
+/** Fisher–Yates shuffle (immutable) */
+function shuffleArray<T>(input: T[]): T[] {
+  const arr = [...input]
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
+
 export default function HeroSection({
-  albums,
+  // ⛔️ [DINONAKTIFKAN] Prop `albums` dulu dipakai buat slideshow dari galeri.
+  // albums,
   stats
 }: {
-  albums: any[]
+  // albums: any[]
   stats?: HeroStatFromSanity[]
 }) {
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
@@ -205,9 +234,19 @@ export default function HeroSection({
       }))
   }, [stats])
 
-  const slideshowImages = useMemo(() => {
-    return pickHeroSlideshowImages(albums ?? [], 6)
-  }, [albums])
+  // ⛔️ [DINONAKTIFKAN] Slideshow lama: ambil gambar dari album galeri Sanity.
+  // Jangan dihapus — biar gampang balik ke sumber galeri kalau dibutuhkan lagi.
+  // const slideshowImages = useMemo(() => {
+  //   return pickHeroSlideshowImages(albums ?? [], 6)
+  // }, [albums])
+
+  // ✅ [BARU] Slideshow pakai image statis dari public/images/hero/,
+  // diacak urutannya tiap kunjungan. Inisialisasi dengan urutan asli dulu
+  // (biar SSR & client match / no hydration mismatch), lalu shuffle setelah mount.
+  const [slideshowImages, setSlideshowImages] = useState(HERO_STATIC_IMAGES)
+  useEffect(() => {
+    setSlideshowImages(shuffleArray(HERO_STATIC_IMAGES))
+  }, [])
 
   return (
     <section
@@ -336,7 +375,12 @@ export default function HeroSection({
           <div className='relative'>
             <div className='relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-white/18 bg-white/10 shadow-2xl backdrop-blur-xl'>
               <div className='absolute inset-0 imtc-anim-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent' />
-              <HeroSlideshow images={slideshowImages} buildUrl={safeImageUrl} />
+              {/* ⛔️ [LAMA] <HeroSlideshow images={slideshowImages} buildUrl={safeImageUrl} /> */}
+              {/* ✅ [BARU] image statis: buildUrl tinggal ambil .src */}
+              <HeroSlideshow
+                images={slideshowImages}
+                buildUrl={(img) => img.src}
+              />
             </div>
 
             {/* stats: DESKTOP overlay */}
