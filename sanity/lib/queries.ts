@@ -1,4 +1,18 @@
 import { groq } from 'next-sanity'
+import { SITE_SETTINGS_ID } from '@/sanity/singletons'
+
+/**
+ * First few photos of an album, for the hover slideshow on gallery cards.
+ * Four is enough to say "there's more inside" without making a card fetch
+ * the whole album.
+ */
+const PREVIEW_IMAGES = `"previewImages": images[0...4]{
+      _key,
+      alt,
+      asset,
+      crop,
+      hotspot
+    }`
 
 export const heroSlideshowAlbumsQuery = groq`
   *[_type == "galleryAlbum" && count(images) > 0]
@@ -31,13 +45,15 @@ export const galleryAlbumListQuery = groq`
     category,
     year,
     order,
+    description,
     coverImage{
       alt,
       asset,
       crop,
       hotspot
     },
-    "imagesCount": count(images)
+    "imagesCount": count(images),
+    ${PREVIEW_IMAGES}
   }
 `
 
@@ -46,6 +62,7 @@ export const galleryAlbumBySlugQuery = groq`
     _id,
     title,
     slug,
+    description,
     category,
     year,
     order,
@@ -91,7 +108,9 @@ export const miniGalleryAlbumsQuery = groq`
       asset,
       crop,
       hotspot
-    }
+    },
+    description,
+    ${PREVIEW_IMAGES}
   }
 `
 
@@ -132,7 +151,14 @@ export const trainingPackagesPreviewQuery = groq`
 `
 
 export const siteSettingsQuery = groq`
-  *[_type == "siteSettings"][0]{
+  *[_type == "siteSettings" && _id == "${SITE_SETTINGS_ID}"][0]{
+    heroImages[]{
+      _key,
+      alt,
+      asset,
+      crop,
+      hotspot
+    },
     heroStats[]{
       icon,
       value,

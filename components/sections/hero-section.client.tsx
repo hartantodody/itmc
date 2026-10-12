@@ -187,10 +187,13 @@ function shuffleArray<T>(input: T[]): T[] {
 export default function HeroSection({
   // ⛔️ [DINONAKTIFKAN] Prop `albums` dulu dipakai buat slideshow dari galeri.
   // albums,
-  stats
+  stats,
+  images
 }: {
   // albums: any[]
   stats?: HeroStatFromSanity[]
+  /** Foto dari siteSettings.heroImages, URL sudah jadi. Kosong → foto statis. */
+  images?: { src: string; alt: string }[]
 }) {
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
   const rafRef = useRef<number | null>(null)
@@ -243,10 +246,16 @@ export default function HeroSection({
   // ✅ [BARU] Slideshow pakai image statis dari public/images/hero/,
   // diacak urutannya tiap kunjungan. Inisialisasi dengan urutan asli dulu
   // (biar SSR & client match / no hydration mismatch), lalu shuffle setelah mount.
-  const [slideshowImages, setSlideshowImages] = useState(HERO_STATIC_IMAGES)
+  // ✅ Sumber: foto dari Studio kalau ada, selain itu foto statis bawaan.
+  // Fallback ini yang menjamin hero tidak pernah kosong — mengosongkan
+  // daftar di Studio cuma mengembalikan foto bawaan.
+  const source = images?.length ? images : HERO_STATIC_IMAGES
+  const [slideshowImages, setSlideshowImages] = useState(source)
   useEffect(() => {
-    setSlideshowImages(shuffleArray(HERO_STATIC_IMAGES))
-  }, [])
+    setSlideshowImages(shuffleArray(source))
+    // `source` is a fresh array each render; key on its content instead.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [source.map((img) => img.src).join('|')])
 
   return (
     <section

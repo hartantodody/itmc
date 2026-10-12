@@ -8,10 +8,15 @@ export type AlbumImageItem = SanityImage & {
   caption?: string
 }
 
+/** Light image shape used by gallery card previews. */
+export type AlbumPreviewImage = SanityImage & { _key: string; alt?: string }
+
 export type AlbumListItem = {
   _id: string
   title: string
   slug: { current: string }
+  description?: string
+  previewImages?: AlbumPreviewImage[]
   category?: string
   year?: string
   order?: number
@@ -23,6 +28,7 @@ export type AlbumDetail = {
   _id: string
   title: string
   slug: { current: string }
+  description?: string
   category?: string
   year?: string
   order?: number
@@ -38,6 +44,8 @@ export type MiniGalleryAlbum = {
   order?: number
   coverImage?: (SanityImage & { alt?: string }) | null
   fallbackImage?: (SanityImage & { _key?: string; alt?: string }) | null
+  description?: string
+  previewImages?: AlbumPreviewImage[]
 }
 
 /** @see sanity/schemaTypes/trainingPackage.ts */

@@ -1,5 +1,9 @@
 import HeroSectionClient from './hero-section.client'
 import { client as sanityClient } from '@/sanity/lib/client'
+import { urlFor } from '@/sanity/lib/image'
+import type { Image as SanityImage } from 'sanity'
+
+type HeroImageFromSanity = SanityImage & { alt?: string }
 import {
   // heroSlideshowAlbumsQuery, // (DINONAKTIFKAN) sumber slideshow dari galeri Sanity
   siteSettingsQuery
@@ -23,7 +27,20 @@ export default async function HeroSection() {
     { next: { revalidate: 60 } }
   )
 
+  // Foto hero dari siteSettings.heroImages (diatur klien di Studio). URL
+  // dibangun di server supaya client cukup menerima string. Kosong / tidak
+  // terjangkau → client jatuh ke foto statis di public/images/hero/.
+  const heroImages = ((settings?.heroImages ?? []) as HeroImageFromSanity[])
+    .filter((img) => Boolean(img?.asset))
+    .map((img) => ({
+      // 1600px: hero-nya kartu 4:3 di setengah layar, bukan full-bleed —
+      // cukup tajam di layar retina tanpa mengirim file ukuran poster.
+      src: urlFor(img).width(1600).height(1200).fit('crop').auto('format').url(),
+      alt: img.alt?.trim() || 'Dokumentasi kegiatan IMTC'
+    }))
+
   // ⛔️ [LAMA] return <HeroSectionClient albums={albums} stats={settings?.heroStats} />
-  // ✅ [BARU] albums tidak lagi dikirim — slideshow pakai image statis di client.
-  return <HeroSectionClient stats={settings?.heroStats} />
+  return (
+    <HeroSectionClient stats={settings?.heroStats} images={heroImages} />
+  )
 }

@@ -11,6 +11,33 @@ export const siteSettings = defineType({
       type: 'string'
     }),
 
+    // Photos behind the homepage hero slideshow. Left empty, the site keeps
+    // using the photos bundled in public/images/hero/, so clearing this
+    // list can never blank the hero.
+    defineField({
+      name: 'heroImages',
+      title: 'Foto Hero Beranda',
+      type: 'array',
+      description:
+        'Foto slideshow di beranda. Urutan diacak setiap kunjungan. Kosongkan untuk memakai foto bawaan.',
+      options: { layout: 'grid' },
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Keterangan Foto (Alt Text)',
+              type: 'string',
+              description:
+                'Deskripsi singkat isi foto. Dibaca pembaca layar dan mesin pencari, tidak tampil di halaman.'
+            })
+          ]
+        }
+      ]
+    }),
+
     defineField({
       name: 'heroStats',
       title: 'Hero Stats',

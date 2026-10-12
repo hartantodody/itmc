@@ -6,6 +6,10 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { AlbumListItem } from '@/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
+import {
+  AlbumHoverSlideshow,
+  buildAlbumFrames
+} from '@/components/common/album-hover-slideshow'
 
 function coverSrc(a: AlbumListItem) {
   const img = a.coverImage ?? null
@@ -74,7 +78,8 @@ export default function GalleryAlbumGridClient({
     () =>
       items.map((a) => ({
         id: a._id,
-        src: coverSrc(a)
+        src: coverSrc(a),
+        frames: buildAlbumFrames(a.coverImage, a.previewImages, a.title)
       })),
     [items]
   )
@@ -90,6 +95,7 @@ export default function GalleryAlbumGridClient({
             <Link
               key={a._id}
               href={href}
+              data-slideshow-root
               className={cn(
                 'group relative overflow-hidden rounded-2xl border bg-card',
                 'transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg'
@@ -97,12 +103,10 @@ export default function GalleryAlbumGridClient({
             >
               <div className='relative aspect-[4/3] w-full'>
                 {src ? (
-                  <Image
-                    src={src}
-                    alt={a.title}
-                    fill
+                  <AlbumHoverSlideshow
+                    frames={sources[idx]?.frames ?? [{ src, alt: a.title }]}
                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                    className='object-cover transition-transform duration-300 group-hover:scale-105'
+                    className='group-hover:scale-105'
                   />
                 ) : (
                   <div className='absolute inset-0 grid place-items-center overflow-hidden bg-muted'>
@@ -134,6 +138,13 @@ export default function GalleryAlbumGridClient({
                   <div className='font-heading text-base font-extrabold text-white'>
                     {a.title}
                   </div>
+                  {/* Two lines max: it sits over the photo, and a long
+                      paragraph would bury the image the card is selling. */}
+                  {a.description ? (
+                    <p className='mt-1 line-clamp-2 text-xs leading-5 text-white/85'>
+                      {a.description}
+                    </p>
+                  ) : null}
                   <div className='mt-1 text-xs text-white/85'>
                     {a.category ?? 'Kegiatan'}
                     {a.year ? ` • ${a.year}` : ''}

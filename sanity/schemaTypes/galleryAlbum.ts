@@ -20,6 +20,20 @@ export const galleryAlbumType = defineType({
       validation: (r) => r.required()
     }),
 
+    // Album-level, not per photo — each image already carries its own
+    // caption. Plain text by decision: a sentence or two is what the card
+    // and the page's meta description can actually use.
+    defineField({
+      name: 'description',
+      title: 'Deskripsi Album',
+      type: 'text',
+      rows: 3,
+      description:
+        'Ringkasan singkat kegiatan, 1–2 kalimat. Tampil di kartu galeri dan di bawah judul halaman album.',
+      validation: (r) =>
+        r.max(300).warning('Sebaiknya singkat — kartu galeri hanya menampilkan 2 baris.')
+    }),
+
     defineField({ name: 'category', title: 'Category', type: 'string' }),
 
     defineField({

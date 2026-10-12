@@ -20,6 +20,10 @@ async function getAlbum(slug: string) {
 }
 
 function buildDescription(album: AlbumDetail) {
+  // An editor-written description beats anything we can assemble from
+  // category and year — it's what search results and link previews show.
+  const written = album.description?.trim()
+  if (written) return written
   const meta = [album.category ?? null, album.year ?? null].filter(Boolean)
   return meta.length ? meta.join(' • ') : `Dokumentasi kegiatan ${album.title}.`
 }
@@ -71,6 +75,7 @@ export default async function GalleryAlbumPage({
   const meta = [album.category ?? null, album.year ?? null]
     .filter(Boolean)
     .join(' • ')
+  const description = album.description?.trim() ?? ''
 
   const pageSize = 12
   const all = (album.images ?? []).filter((img) => Boolean((img as any)?.asset))
@@ -80,10 +85,17 @@ export default async function GalleryAlbumPage({
   return (
     <main className='relative overflow-hidden py-16 sm:py-20'>
       <Container className='space-y-12'>
+        {/* With a description, it takes the description slot and
+            category • year moves up into the badge so neither is lost.
+            Without one, the header renders exactly as it always has. */}
         <PageHeader
-          badge={{ label: 'Dokumentasi kegiatan', icon: ImageIcon }}
+          badge={{
+            label:
+              description && meta ? meta : 'Dokumentasi kegiatan',
+            icon: ImageIcon
+          }}
           title={album.title}
-          description={meta || 'Foto dokumentasi kegiatan.'}
+          description={description || meta || 'Foto dokumentasi kegiatan.'}
           actions={[
             { label: 'Kembali ke Galeri', href: '/galeri', variant: 'default' }
           ]}
