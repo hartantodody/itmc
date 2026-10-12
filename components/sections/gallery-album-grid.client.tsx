@@ -6,10 +6,8 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { AlbumListItem } from '@/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
-import {
-  AlbumHoverSlideshow,
-  buildAlbumFrames
-} from '@/components/common/album-hover-slideshow'
+import { AlbumHoverSlideshow } from '@/components/common/album-hover-slideshow'
+import { buildAlbumFrames } from '@/sanity/lib/album-frames'
 
 function coverSrc(a: AlbumListItem) {
   const img = a.coverImage ?? null

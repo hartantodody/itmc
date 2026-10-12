@@ -10,6 +10,8 @@ import { client as sanityClient } from '@/sanity/lib/client'
 import { miniGalleryAlbumsQuery } from '@/sanity/lib/queries'
 import type { MiniGalleryAlbum } from '@/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
+import { AlbumHoverSlideshow } from '@/components/common/album-hover-slideshow'
+import { buildAlbumFrames } from '@/sanity/lib/album-frames'
 
 const TILE_CLASS: Record<string, string> = {
   '0': 'sm:col-span-2 sm:row-span-2',
@@ -80,6 +82,7 @@ export default async function MiniGallerySection() {
                   <Link
                     key={a._id}
                     href={`/galeri/${a.slug}`}
+                    data-slideshow-root
                     className={cn(
                       'group relative overflow-hidden rounded-[28px]',
                       'border border-white/12 bg-white/5 backdrop-blur',
@@ -91,12 +94,14 @@ export default async function MiniGallerySection() {
                   >
                     <div className='absolute inset-0'>
                       {src ? (
-                        <Image
-                          src={src}
-                          alt={cover?.alt ?? a.title}
-                          fill
+                        <AlbumHoverSlideshow
+                          frames={buildAlbumFrames(
+                            cover,
+                            a.previewImages,
+                            cover?.alt ?? a.title
+                          )}
                           sizes='(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 25vw'
-                          className='object-cover transition-transform duration-500 group-hover:scale-[1.05]'
+                          className='group-hover:scale-[1.05]'
                         />
                       ) : (
                         <div className='relative h-full w-full overflow-hidden'>
